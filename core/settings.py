@@ -30,6 +30,10 @@ THIRD_PARTY_APPS = [
     "compressor",
 ]
 
+CUSTOM_APPS = [
+    'apps.user',
+]
+
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
@@ -69,11 +73,18 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("NAME"),
+        "HOST": config("HOST"),
+        "USER": config("USER"),
+        "PASSWORD": config("PASSWORD"),
     }
 }
+
+
+# CUSTOM USER
+AUTH_USER_MODEL = "user.User"
 
 
 # Password validation
@@ -127,3 +138,23 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 COMPRESS_ENABLED = True
 
 STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+
+
+# CELERY AND CELERY BEAT
+CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = "Africa/Lagos"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+
+
+# EMAIL SETUP
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    # EMAIL_PORT = ''
+    # EMAIL_HOST_USER = 'your@djangoapp.com'
+    # EMAIL_HOST_PASSWORD = 'your-email account-password'
+    # EMAIL_USE_TLS = True
+    # EMAIL_USE_SSL = False
+    # EMAIL_FILE_PATH = "/tmp/messages"  # change this to a proper location
