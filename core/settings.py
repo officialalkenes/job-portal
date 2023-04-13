@@ -153,3 +153,6 @@ if DEBUG:
     # EMAIL_USE_TLS = True
     # EMAIL_USE_SSL = False
     # EMAIL_FILE_PATH = "/tmp/messages"  # change this to a proper location
+
+LOGIN_ATTEMPTS_TIME_LIMIT = 18000
+MAX_LOGIN_ATTEMPTS = 3
