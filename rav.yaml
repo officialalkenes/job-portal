@@ -1,6 +1,8 @@
 # Django
 scripts:
   server: py manage.py runserver
+  delete-migrate: find apps -name "migrations" -type d -exec rm -r {} \;
+  celery: celery -A core.celery worker --pool=solo -l info
 
   win_installs:
     - pip freeze > requirements.in
@@ -11,4 +13,3 @@ scripts:
 
 # Tailwindcss watch
   watch: npm run watcher
-  
