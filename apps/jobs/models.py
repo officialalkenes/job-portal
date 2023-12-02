@@ -3,6 +3,8 @@ import geocoder
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from django.utils.translation import gettext_lazy as _
+
 from django.contrib.gis.db import models as modelsgis
 from django.contrib.gis.geos import Point
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -45,31 +47,49 @@ class ExperienceChoice(models.TextChoices):
     ABOVE_TWO_YEARS = "Two Years and above"
 
 
+class WorkPlaceTypes(models.TextChoices):
+    ONSITE = "On Site"
+    HYBRID = "Hybrid"
+    REMOTE = "Remote"
+
+
 class JobListing(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=100, verbose_name="Job Title")
     description = models.TextField(null=True)
+    company = models.CharField(max_length=100)
     company_email = models.EmailField(null=True)
-    address = models.CharField(max_length=255, null=True)
+    location = models.CharField(
+        max_length=255, null=True, verbose_name=_("Job Location")
+    )
     job_type = models.CharField(
         max_length=20, choices=JobType.choices, default=JobType.Remote
     )
-    education = models.CharField(max_length=20, choices=EducationLevel.choices)
-    industry = models.CharField(max_length=20, choices=Industry.choices)
-    experience = models.CharField(max_length=20, choices=ExperienceChoice.choices)
-    salary = models.PositiveIntegerField(
-        default=5, validators=[MinValueValidator(5), MaxValueValidator(1000_000)]
+    work_type = models.CharField(
+        max_length=100, choices=WorkPlaceTypes.choices, default=WorkPlaceTypes.ONSITE
     )
+    education = models.CharField(max_length=30, choices=EducationLevel.choices)
+    experience = models.CharField(max_length=30, choices=ExperienceChoice.choices)
+    salary = models.PositiveIntegerField(
+        default=5, validators=[MinValueValidator(5), MaxValueValidator(1000_000_000)]
+    )
+    city = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    application_link = models.URLField(blank=True)
     positions = models.CharField(max_length=100)
     geo_point = modelsgis.PointField(default=Point(0.0, 0.0))
-    company = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         key_geo = config("GEOCODING_KEY")
-        g = geocoder.mapquest(self.address, key=key_geo)
+        g = geocoder.mapquest(self.location, key=key_geo)
         longitude = g.lng
         latitude = g.lat
+        self.country = g.country
+        self.city = g.city
         self.geo_point = Point(longitude, latitude)
         return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{self.title}"

@@ -28,13 +28,15 @@ LOCAL_APPS = [
 
 THIRD_PARTY_APPS = [
     # "compressor",
-    # 'corsheaders',
-    # 'rest_framework',
+    "corsheaders",
+    "rest_framework",
     # 'django_filters'
 ]
 
 CUSTOM_APPS = [
     "apps.user",
+    "apps.jobs",
+    # 'accounts',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + THIRD_PARTY_APPS + CUSTOM_APPS

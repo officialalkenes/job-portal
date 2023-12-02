@@ -21,6 +21,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("Email Address"),
         help_text=_("Provide a Valid Email Address"),
     )
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(
         max_length=11, verbose_name=_("User's Phone Number"), blank=True
     )
@@ -50,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["phone_number"]
 
     objects = UserManager()
 
