@@ -78,8 +78,8 @@ class JobListing(models.Model):
     application_link = models.URLField(blank=True)
     positions = models.CharField(max_length=100)
     geo_point = modelsgis.PointField(default=Point(0.0, 0.0))
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    closing_date = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         key_geo = config("GEOCODING_KEY")
