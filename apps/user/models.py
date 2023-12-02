@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth import user_logged_in, user_logged_out, user_login_failed
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
+
 from django.db import models
 from django.db.models.functions import Now
 from django.db.models.signals import pre_save, post_save
@@ -20,7 +21,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("Email Address"),
         help_text=_("Provide a Valid Email Address"),
     )
-    admission_number = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(
         max_length=11, verbose_name=_("User's Phone Number"), blank=True
     )
@@ -41,7 +41,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_("Date Joined"), auto_now_add=True)
     last_login = models.DateTimeField(_("Last Login Date"), auto_now=True)
-
+    is_freelancer = models.BooleanField(default=False)
+    is_client = models.BooleanField(default=False)
     is_verified = models.BooleanField(
         _("email_verify"),
         default=False,
