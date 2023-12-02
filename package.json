@@ -1,8 +1,0 @@
-{
-  "scripts": {
-    "watcher": "npx tailwindcss -i static/src/tailwind-config.css -o static/src/output.css -w"
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.3.1"
-  }
-}
