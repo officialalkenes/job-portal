@@ -8,6 +8,7 @@ from .views import home
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("apps.jobs.urls", namespace="jobs")),
     path("acccounts/", include("apps.user.urls", namespace="accounts")),
 ]
 

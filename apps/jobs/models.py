@@ -1,3 +1,4 @@
+import uuid
 import geocoder
 
 from django.contrib.auth import get_user_model
@@ -54,6 +55,7 @@ class WorkPlaceTypes(models.TextChoices):
 
 
 class JobListing(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, unique=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=100, verbose_name="Job Title")
     description = models.TextField(null=True)
@@ -73,11 +75,11 @@ class JobListing(models.Model):
     salary = models.PositiveIntegerField(
         default=5, validators=[MinValueValidator(5), MaxValueValidator(1000_000_000)]
     )
-    city = models.CharField(max_length=100, blank=True)
-    country = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     application_link = models.URLField(blank=True)
     positions = models.CharField(max_length=100)
-    geo_point = modelsgis.PointField(default=Point(0.0, 0.0))
+    geo_point = modelsgis.PointField(default=Point(0.0, 0.0), blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     closing_date = models.DateTimeField()
 

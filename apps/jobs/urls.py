@@ -1,4 +1,9 @@
 from django.urls import path
 
+from . import views
 
-urlpatterns = []
+app_name = "jobs"
+
+urlpatterns = [
+    path("", views.AllJobs.as_view(), name="all-jobs"),
+]
