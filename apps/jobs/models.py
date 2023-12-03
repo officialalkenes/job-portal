@@ -11,7 +11,7 @@ from django.contrib.gis.geos import Point
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from decouple import config
-
+from .validators import validate_positions
 
 User = get_user_model()
 
@@ -78,7 +78,6 @@ class JobListing(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     application_link = models.URLField(blank=True)
-    positions = models.CharField(max_length=100)
     geo_point = modelsgis.PointField(default=Point(0.0, 0.0), blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     closing_date = models.DateTimeField()
