@@ -2,7 +2,14 @@ from django.shortcuts import render
 
 from django.db.models import Aggregate, Avg, Count, Min, Max, Sum
 
-from rest_framework import authentication, permissions, response, status, views
+from rest_framework import (
+    authentication,
+    pagination,
+    permissions,
+    response,
+    status,
+    views,
+)
 
 from apps.jobs.filters import JobFilterset
 from .serializers import JobSerializer
@@ -18,8 +25,20 @@ class AllJobs(views.APIView):
         filterset = JobFilterset(
             request.GET, queryset=JobListing.objects.all().order_by("-created")
         )
-        serializer = JobSerializer(filterset.qs, many=True)
-        return response.Response(serializer.data)
+        total_qs = filterset.qs.count()
+        paginated_response = 5
+        paginator = pagination.PageNumberPagination()
+        paginator.page_size = paginated_response
+        queryset = paginator.paginate_queryset(filterset.qs, request)
+
+        serializer = JobSerializer(queryset, many=True)
+        return response.Response(
+            {
+                "total_qs_count": total_qs,
+                "jobs": serializer.data,
+                "paginated_response": paginated_response,
+            }
+        )
 
 
 class GetUpdateJob(views.APIView):
