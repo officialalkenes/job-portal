@@ -79,6 +79,7 @@ class JobListing(models.Model):
     country = models.CharField(max_length=100, blank=True, null=True)
     application_link = models.URLField(blank=True)
     geo_point = modelsgis.PointField(default=Point(0.0, 0.0), blank=True)
+    available_positions = models.PositiveIntegerField(default=1)
     created_date = models.DateTimeField(auto_now_add=True)
     closing_date = models.DateTimeField()
 

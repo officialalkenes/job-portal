@@ -1,6 +1,10 @@
 from django.shortcuts import render
 
+from django.db.models import Aggregate, Avg, Count, Min, Max, Sum
+
 from rest_framework import authentication, permissions, response, status, views
+
+from apps.jobs.filters import JobFilterset
 from .serializers import JobSerializer
 from .models import JobListing
 
@@ -11,8 +15,10 @@ class AllJobs(views.APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        jobs = JobListing.objects.all()
-        serializer = JobSerializer(jobs, many=True)
+        filterset = JobFilterset(
+            request.GET, queryset=JobListing.objects.all().order_by("-created")
+        )
+        serializer = JobSerializer(filterset.qs, many=True)
         return response.Response(serializer.data)
 
 
@@ -53,3 +59,15 @@ class CreateJob(views.APIView):
             # You can perform additional actions here if needed
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetJobStat(views.APIView):
+    serializer = JobSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request, topic):
+        topics = {"topic__icontains": topic}
+        jobs = JobListing.objects.filter(**topics)
+        if len(jobs) == 0:
+            return response.Response({"message": f"No stats found for {topic}"})
+        # stats = jobs.aggregate(total_jobs=Count("title"))
