@@ -274,12 +274,12 @@ paths:
           description: ''
       tags:
       - jobs
-  /jobs/job/{id}/:
+  /jobs/job/{uuid}/:
     get:
       operationId: retrieveGetUpdateJob
       description: ''
       parameters:
-      - name: id
+      - name: uuid
         in: path
         required: true
         description: ''
@@ -297,7 +297,7 @@ paths:
       operationId: updateGetUpdateJob
       description: ''
       parameters:
-      - name: id
+      - name: uuid
         in: path
         required: true
         description: ''
@@ -316,6 +316,21 @@ paths:
           content:
             application/json:
               schema: {}
+          description: ''
+      tags:
+      - jobs
+    delete:
+      operationId: destroyGetUpdateJob
+      description: ''
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - jobs
@@ -647,8 +662,6 @@ components:
         email:
           type: string
           format: email
-          description: Provide a Valid Email Address
-          maxLength: 254
       required:
       - email
     UserCreatePasswordRetype:

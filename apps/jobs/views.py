@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.db.models import Aggregate, Avg, Count, Min, Max, Sum
 
 from rest_framework import (
-    authentication,
     pagination,
     permissions,
     response,
@@ -54,14 +53,26 @@ class GetUpdateJob(views.APIView):
         job = JobListing.objects.get(id=uuid)
         serializer = JobSerializer(job, data=request.data)
         if serializer.is_valid():
+            if request.user != job.user:
+                return response.Response(
+                    {"messages": "You are not Authorized to update this Job"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             serializer.save()
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, uuid):
         job = JobListing.objects.get(id=uuid)
+        if request.user != job.user or not request.user.is_superuser:
+            return response.Response(
+                {"messages": "You are not Authorized to delete this Job"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         job.delete()
-        return response.Response()
+        return response.Response(
+            {"message": "user deleted successfully"}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class CreateJob(views.APIView):

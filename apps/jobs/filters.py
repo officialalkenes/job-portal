@@ -12,7 +12,7 @@ class JobFilterset(filters.FilterSet):
     class Meta:
         model = JobListing
         fields = (
-            "keyword",
+            "keywords",
             "location",
             "company",
             "job_type",
