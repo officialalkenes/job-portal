@@ -39,3 +39,11 @@ urlpatterns = [
     path("jobs/", include("apps.jobs.urls", namespace="jobs")),
     # path("skills/", include("apps.skills.urls", namespace="skills")),
 ]
+
+# Custom Exception
+handler500 = "apps.jobs.utils.handler500"
+handler404 = "apps.jobs.utils.handler404"
+
+# Rest Framework
+# handler400 = 'rest_framework.exceptions.bad_request'
+# handler500 = 'rest_framework.exceptions.server_error'
