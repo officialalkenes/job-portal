@@ -72,7 +72,10 @@ class JobListing(models.Model):
     )
     education = models.CharField(max_length=30, choices=EducationLevel.choices)
     experience = models.CharField(max_length=30, choices=ExperienceChoice.choices)
-    salary = models.PositiveIntegerField(
+    min_salary = models.PositiveIntegerField(
+        default=5, validators=[MinValueValidator(5), MaxValueValidator(1000_000_000)]
+    )
+    max_salary = models.PositiveIntegerField(
         default=5, validators=[MinValueValidator(5), MaxValueValidator(1000_000_000)]
     )
     city = models.CharField(max_length=100, blank=True, null=True)
@@ -95,3 +98,15 @@ class JobListing(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title}"
+
+
+class CandidacyApllication(models.Model):
+    job = models.ForeignKey(
+        JobListing, on_delete=models.CASCADE, related_name="jobapplication"
+    )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    proposal_resume = models.CharField(max_length=120)
+    application_date = models.DateField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.user} applied to {self.job.title}"

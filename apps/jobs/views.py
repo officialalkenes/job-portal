@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from django.db.models import Aggregate, Avg, Count, Min, Max, Sum
 
@@ -11,7 +11,7 @@ from rest_framework import (
 )
 
 from apps.jobs.filters import JobFilterset
-from .serializers import JobSerializer
+from .serializers import ApplyJobSerializer, JobSerializer
 from .models import JobListing
 
 
@@ -101,3 +101,20 @@ class GetJobStat(views.APIView):
         if len(jobs) == 0:
             return response.Response({"message": f"No stats found for {topic}"})
         # stats = jobs.aggregate(total_jobs=Count("title"))
+
+
+class ApplyJobView(views.APIView):
+    serializer_class = ApplyJobSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request, job_id):
+        job = get_object_or_404(JobListing, id=job_id)
+        serializer = ApplyJobSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # Assign the current user to the serializer's user field
+            serializer.validated_data["user"] = request.user
+            serializer.validated_data["job"] = job
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

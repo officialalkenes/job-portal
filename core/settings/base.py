@@ -43,6 +43,7 @@ CUSTOM_APPS = [
     "apps.user",
     "apps.jobs",
     "apps.skill",
+    "apps.profiles",
     # 'accounts',
 ]
 
@@ -134,6 +135,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # OAuth2, JWT
     ),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "EXCEPTION_HANDLER": "apps.utils.exception_handlers.custom_exception_handler",
 }
 
 # redirect_white_list = config("redirect_white_list")

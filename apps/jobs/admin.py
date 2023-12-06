@@ -11,7 +11,8 @@ class JobListingAdmin(OSMGeoAdmin):
         "job_type",
         "education",
         "experience",
-        "salary",
+        "min_salary",
+        "max_salary",
     )
     list_filter = (
         "job_type",
