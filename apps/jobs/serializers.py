@@ -14,3 +14,6 @@ class ApplyJobSerializer(serializers.ModelSerializer):
     class Meta:
         model = CandidacyApllication
         fields = ("proposal_resume", "job")
+
+
+# Validation on serializers

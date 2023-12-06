@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from django.db.models import Aggregate, Avg, Count, Min, Max, Sum
+from django.db.models import Aggregate, Avg, Count, Min, Max, Q, Sum
 
 from rest_framework import (
     pagination,
@@ -12,7 +12,7 @@ from rest_framework import (
 
 from apps.jobs.filters import JobFilterset
 from .serializers import ApplyJobSerializer, JobSerializer
-from .models import JobListing
+from .models import CandidacyApllication, JobListing
 
 
 class AllJobs(views.APIView):
@@ -109,12 +109,32 @@ class ApplyJobView(views.APIView):
 
     def post(self, request, job_id):
         job = get_object_or_404(JobListing, id=job_id)
+        user = request.user
+        profile = user.userprofile
+        if CandidacyApllication.objects.filter(Q(user=user) & Q(job=job)).exists():
+            return response.Response(
+                {
+                    "error": "You have already applied for this job.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = ApplyJobSerializer(data=request.data)
 
         if serializer.is_valid():
-            # Assign the current user to the serializer's user field
-            serializer.validated_data["user"] = request.user
+            # Check if the user has uploaded a resume before applying
+            if not profile.resume:
+                return response.Response(
+                    {
+                        "error": "Please upload your resume before applying.",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer.validated_data["user"] = user
             serializer.validated_data["job"] = job
             serializer.save()
+
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
