@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-from .models import CandidacyApllication, JobListing
+from .models import CandidacyApplication, JobListing
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 class ApplyJobSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CandidacyApllication
+        model = CandidacyApplication
         fields = ("proposal_resume", "job")
 
 

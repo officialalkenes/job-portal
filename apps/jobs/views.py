@@ -12,7 +12,7 @@ from rest_framework import (
 
 from apps.jobs.filters import JobFilterset
 from .serializers import ApplyJobSerializer, JobSerializer
-from .models import CandidacyApllication, JobListing
+from .models import CandidacyApplication, JobListing
 
 
 class AllJobs(views.APIView):
@@ -111,14 +111,13 @@ class ApplyJobView(views.APIView):
         job = get_object_or_404(JobListing, id=job_id)
         user = request.user
         profile = user.userprofile
-        if CandidacyApllication.objects.filter(Q(user=user) & Q(job=job)).exists():
+        if CandidacyApplication.objects.filter(Q(user=user) & Q(job=job)).exists():
             return response.Response(
                 {
                     "error": "You have already applied for this job.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         serializer = ApplyJobSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -130,11 +129,28 @@ class ApplyJobView(views.APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             serializer.validated_data["user"] = user
             serializer.validated_data["job"] = job
             serializer.save()
-
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyJobAppliedViews(views.APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        user = request.user
+        jobs = CandidacyApplication.objects.filter(user=user)
+        serializer = ApplyJobSerializer(jobs, many=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListCandidatesView(views.APIView):
+    serializer_class = ApplyJobSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request, job_id):
+        job_candidates = CandidacyApplication.objects.filter(job__id=job_id)
+        serializer = ApplyJobSerializer(job_candidates, many=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)

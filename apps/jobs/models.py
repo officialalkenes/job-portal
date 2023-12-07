@@ -100,7 +100,7 @@ class JobListing(models.Model):
         return f"{self.title}"
 
 
-class CandidacyApllication(models.Model):
+class CandidacyApplication(models.Model):
     job = models.ForeignKey(
         JobListing, on_delete=models.CASCADE, related_name="jobapplication"
     )
