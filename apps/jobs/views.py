@@ -91,7 +91,7 @@ class CreateJob(views.APIView):
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetJobStat(views.APIView):
+class GetJobStatView(views.APIView):
     serializer = JobSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -100,7 +100,15 @@ class GetJobStat(views.APIView):
         jobs = JobListing.objects.filter(**topics)
         if len(jobs) == 0:
             return response.Response({"message": f"No stats found for {topic}"})
-        # stats = jobs.aggregate(total_jobs=Count("title"))
+
+        stats = jobs.aggregate(
+            total_jobs=Count("title"),
+            avg_positions=Avg("positions"),
+            avg_salary=Avg("salary"),
+            min_salary=Min("salary"),
+            max_salary=Max("salary"),
+        )
+        return response.Response(stats, status=status.HTTP_200_OK)
 
 
 class ApplyJobView(views.APIView):

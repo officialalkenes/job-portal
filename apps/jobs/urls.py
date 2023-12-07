@@ -8,4 +8,5 @@ urlpatterns = [
     path("", views.AllJobs.as_view(), name="all-jobs"),
     path("create-job", views.CreateJob.as_view(), name="create-job"),
     path("job/<str:uuid>/", views.GetUpdateJob.as_view(), name="get-job"),
+    path("job/<str:uuid>/", views.GetJobStatView.as_view(), name="get-job-stat"),
 ]
