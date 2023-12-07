@@ -59,6 +59,7 @@ class JobListing(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=100, verbose_name="Job Title")
     description = models.TextField(null=True)
+    responsibility = models.TextField(null=True)
     company = models.CharField(max_length=100)
     company_email = models.EmailField(null=True)
     location = models.CharField(

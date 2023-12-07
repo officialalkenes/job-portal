@@ -100,7 +100,6 @@ class GetJobStatView(views.APIView):
         jobs = JobListing.objects.filter(**topics)
         if len(jobs) == 0:
             return response.Response({"message": f"No stats found for {topic}"})
-
         stats = jobs.aggregate(
             total_jobs=Count("title"),
             avg_positions=Avg("positions"),
